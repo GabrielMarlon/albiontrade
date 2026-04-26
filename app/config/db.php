@@ -7,14 +7,7 @@
  *   getenv('DB_HOST'), getenv('DB_PASS'), etc.
  */
 
-define('BASE_URL',   '/www/plataformas/albiontrade');   // URL base do projeto
-
-define('DB_HOST',    'mysql');
-define('DB_PORT',    '3306');
-define('DB_NAME',    'albiontrade');
-define('DB_USER',    'root');        // usuário com privilégio de CREATE DATABASE
-define('DB_PASS',    'root');
-define('DB_CHARSET', 'utf8mb4');
+require_once dirname(__DIR__, 2) . '/config/app.php';
 
 /**
  * Retorna a instância PDO (singleton).
@@ -32,7 +25,7 @@ function db(): PDO
         $pdo = new PDO(
             sprintf('mysql:host=%s;port=%s;charset=%s', DB_HOST, DB_PORT, DB_CHARSET),
             DB_USER,
-            DB_PASS,
+            DB_PASSWORD,
             [
                 PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -42,7 +35,7 @@ function db(): PDO
 
         $pdo->exec(
             'CREATE DATABASE IF NOT EXISTS `' . DB_NAME . '`
-             CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'
+             CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci'
         );
         $pdo->exec('USE `' . DB_NAME . '`');
 
@@ -80,7 +73,7 @@ function _criar_tabelas(PDO $pdo): void
             PRIMARY KEY (`id`),
             UNIQUE KEY `uq_email` (`email`),
             UNIQUE KEY `uq_nick`  (`nick`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
     ");
 
     // ── Sessões (remember me) ─────────────────────────────────────────────
@@ -99,7 +92,7 @@ function _criar_tabelas(PDO $pdo): void
             CONSTRAINT `fk_sessao_usuario`
                 FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`)
                 ON DELETE CASCADE
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
     ");
 
     // ── Anúncios ──────────────────────────────────────────────────────────
@@ -144,7 +137,7 @@ function _criar_tabelas(PDO $pdo): void
             CONSTRAINT `fk_anuncio_usuario`
                 FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`)
                 ON DELETE CASCADE
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
     ");
 
     // ── Migração: subcategoria ────────────────────────────────────────────
@@ -216,6 +209,6 @@ function _criar_tabelas(PDO $pdo): void
             PRIMARY KEY (`id`),
             UNIQUE KEY `uq_token` (`token_hash`),
             KEY `idx_email` (`email`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
     ");
 }
